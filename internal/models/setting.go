@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"github.com/pkg/errors"
 )
 
 type Setting struct {
@@ -35,6 +36,14 @@ const webhookTemplate = `
 }
 `
 
+const workwxTemplate = `
+任务ID:  {{.TaskId}}
+任务名称: {{.TaskName}}
+状态:    {{.Status}}
+执行结果: {{.Result}}
+备注: {{.Remark}}
+`
+
 const (
 	SlackCode        = "slack"
 	SlackUrlKey      = "url"
@@ -53,6 +62,14 @@ const (
 	WebhookCode        = "webhook"
 	WebhookTemplateKey = "template"
 	WebhookUrlKey      = "url"
+)
+
+const (
+	WorkwxCode      = "workwx"
+	WorkwxAgentInfo = "config"
+	WorkwxTemplate  = "workwxTemplate"
+
+	WorkwxUserId = "workwxUserId"
 )
 
 // 初始化基本字段 邮件、slack等
@@ -289,6 +306,102 @@ func (setting *Setting) UpdateWebHook(url, template string) error {
 	Db.Cols("value").Update(setting, Setting{Code: WebhookCode, Key: WebhookTemplateKey})
 
 	return nil
+}
+
+type WorkwxConfig struct {
+	CorpId   string       `json:"corpId"`
+	Secret   string       `json:"secret"`
+	AgentId  string       `json:"agentId"`
+	Users    []WorkwxUser `json:"users"`
+	Template string       `json:"template"`
+}
+
+type WorkwxUser struct {
+	Id     int    `json:"id"`
+	UserId string `json:"userId"`
+}
+
+func (setting *Setting) Workwx() (WorkwxConfig, error) {
+	list := make([]Setting, 0)
+	err := Db.Where("code = ?", WorkwxCode).Find(&list)
+	config := WorkwxConfig{}
+	if err != nil {
+		return config, err
+	}
+
+	setting.formatWorkwx(list, &config)
+
+	return config, err
+}
+
+func (setting *Setting) UpdateWorkwx(config, template string) error {
+	setting.Value = config
+	update, err := Db.Cols("value").Update(setting, Setting{Code: WorkwxCode, Key: WorkwxAgentInfo})
+
+	if err != nil {
+		return err
+	}
+	if update == 0 {
+		newSetting := new(Setting)
+		newSetting.Code = WorkwxCode
+		newSetting.Key = WorkwxAgentInfo
+		newSetting.Value = config
+		Db.Insert(newSetting)
+	}
+
+	setting.Value = template
+	update, err = Db.Cols("value").Update(setting, Setting{Code: WorkwxCode, Key: WorkwxTemplate})
+	if err != nil {
+		return err
+	}
+	if update == 0 {
+		newSetting := new(Setting)
+		newSetting.Code = WorkwxCode
+		newSetting.Key = WorkwxTemplate
+		newSetting.Value = template
+		Db.Insert(newSetting)
+	}
+
+	return nil
+}
+
+func (setting *Setting) CreateWorkwxUser(userId string) (int64, error) {
+	list := make([]Setting, 0)
+	err := Db.Where("code = ? and key = ? and value = ?", WorkwxCode, WorkwxUserId, userId).Find(&list)
+	if err != nil {
+		return 0, err
+	}
+	if len(list) > 0 {
+		return 0, errors.New("当前用户已经存在")
+	}
+
+	setting.Code = WorkwxCode
+	setting.Key = WorkwxUserId
+	setting.Value = userId
+	return Db.Insert(setting)
+}
+
+func (setting *Setting) RemoveWorkwxUser(id int) (int64, error) {
+	setting.Code = WorkwxCode
+	setting.Key = WorkwxUserId
+	setting.Id = id
+	return Db.Delete(setting)
+}
+
+func (setting *Setting) formatWorkwx(list []Setting, config *WorkwxConfig) {
+	for _, v := range list {
+		switch v.Key {
+		case WorkwxAgentInfo:
+			json.Unmarshal([]byte(v.Value), config)
+		case WorkwxUserId:
+			config.Users = append(config.Users, WorkwxUser{
+				Id:     v.Id,
+				UserId: v.Value,
+			})
+		case WorkwxTemplate:
+			config.Template = v.Value
+		}
+	}
 }
 
 // endregion

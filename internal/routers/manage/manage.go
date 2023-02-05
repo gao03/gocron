@@ -127,4 +127,52 @@ func UpdateWebHook(ctx *macaron.Context) string {
 	return utils.JsonResponseByErr(err)
 }
 
+func Workwx(ctx *macaron.Context) string {
+	settingModel := new(models.Setting)
+	config, err := settingModel.Workwx()
+	jsonResp := utils.JsonResponse{}
+	if err != nil {
+		logger.Error(err)
+		return jsonResp.Success(utils.SuccessContent, nil)
+	}
+
+	return jsonResp.Success("", config)
+}
+
+type WorkwxServerForm struct {
+	CorpId  string `binding:"Required;MaxSize(128)"`
+	Secret  string `binding:"Required;MaxSize(512)"`
+	AgentId string `binding:"Required;MaxSize(128)"`
+}
+
+func UpdateWorkwx(ctx *macaron.Context, form WorkwxServerForm) string {
+	jsonByte, _ := json.Marshal(form)
+	settingModel := new(models.Setting)
+
+	template := ctx.QueryTrim("template")
+	err := settingModel.UpdateWorkwx(string(jsonByte), template)
+
+	return utils.JsonResponseByErr(err)
+}
+
+func CreateWorkwxUser(ctx *macaron.Context) string {
+	userId := ctx.QueryTrim("userId")
+	settingModel := new(models.Setting)
+	if userId == "" {
+		jsonResp := utils.JsonResponse{}
+		return jsonResp.CommonFailure("用户ID不能为空")
+	}
+	_, err := settingModel.CreateWorkwxUser(userId)
+
+	return utils.JsonResponseByErr(err)
+}
+
+func RemoveWorkwxUser(ctx *macaron.Context) string {
+	id := ctx.ParamsInt(":id")
+	settingModel := new(models.Setting)
+	_, err := settingModel.RemoveWorkwxUser(id)
+
+	return utils.JsonResponseByErr(err)
+}
+
 // endregion

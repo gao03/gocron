@@ -122,6 +122,13 @@ func Register(m *macaron.Macaron) {
 			m.Get("", manage.WebHook)
 			m.Post("/update", manage.UpdateWebHook)
 		})
+		m.Group("/workwx", func() {
+			m.Get("", manage.Workwx)
+			m.Post("/update", binding.Bind(manage.WorkwxServerForm{}), manage.UpdateWorkwx)
+			m.Post("/user", manage.CreateWorkwxUser)
+			m.Post("/user/remove/:id", manage.RemoveWorkwxUser)
+		})
+
 		m.Get("/login-log", loginlog.Index)
 	})
 
