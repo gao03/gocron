@@ -5,15 +5,16 @@ import (
 	"strings"
 	"time"
 
-	macaron "gopkg.in/macaron.v1"
+	"gopkg.in/macaron.v1"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/go-xorm/core"
-	"github.com/go-xorm/xorm"
 	_ "github.com/lib/pq"
 	"github.com/ouqiang/gocron/internal/modules/app"
 	"github.com/ouqiang/gocron/internal/modules/logger"
 	"github.com/ouqiang/gocron/internal/modules/setting"
+	_ "modernc.org/sqlite"
+	"xorm.io/core"
+	"xorm.io/xorm"
 )
 
 type Status int8
@@ -90,7 +91,7 @@ func CreateDb() *xorm.Engine {
 	// 本地环境开启日志
 	if macaron.Env == macaron.DEV {
 		engine.ShowSQL(true)
-		engine.Logger().SetLevel(core.LOG_DEBUG)
+		engine.Logger().SetLevel(logger.DEBUG)
 	}
 
 	go keepDbAlived(engine)
@@ -125,7 +126,7 @@ func getDbEngineDSN(setting *setting.Setting) string {
 			setting.Db.Host,
 			setting.Db.Port,
 			setting.Db.Database)
-	case "sqlite3":
+	case "sqlite":
 		dsn = setting.Db.Database
 	}
 

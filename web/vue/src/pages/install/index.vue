@@ -146,14 +146,14 @@ export default {
           label: 'PostgreSql'
         },
         {
-          value: 'sqlite3',
-          label: 'sqlite3'
+          value: 'sqlite',
+          label: 'sqlite'
         }
       ],
       default_ports: {
         'mysql': 3306,
         'postgres': 5432,
-        'sqlite3': 1
+        'sqlite': 1
       }
     }
   },

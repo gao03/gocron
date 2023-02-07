@@ -4,11 +4,11 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/ouqiang/gocron/internal/modules/app"
 	"github.com/ouqiang/gocron/internal/modules/logger"
 	"github.com/ouqiang/gocron/internal/modules/setting"
 	"github.com/stretchr/testify/assert"
+	_ "modernc.org/sqlite"
 )
 
 func TestDSN(t *testing.T) {
@@ -24,7 +24,7 @@ func TestDSN(t *testing.T) {
 			Charset      string
 			MaxIdleConns int
 			MaxOpenConns int
-		}{Engine: "sqlite3", Database: "./test.db"},
+		}{Engine: "sqlite", Database: "./test.db"},
 		AllowIps:         "",
 		AppName:          "",
 		ApiKey:           "",
@@ -56,7 +56,7 @@ func TestCreateDb(t *testing.T) {
 			Charset      string
 			MaxIdleConns int
 			MaxOpenConns int
-		}{Engine: "sqlite3", Database: "./test.db"},
+		}{Engine: "sqlite", Database: "./test.db"},
 		AllowIps:         "",
 		AppName:          "",
 		ApiKey:           "",
