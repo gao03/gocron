@@ -40,20 +40,25 @@ func run() {
 		}
 		msg["content"] = fmt.Sprintf("============\n============\n============\n任务名称: %s\n状态: %s\n输出:\n %s\n", msg["name"], msg["status"], msg["output"])
 		logger.Debugf("%+v", msg)
+
+		var sender Notifiable
 		switch taskType.(int8) {
 		case 1:
 			// 邮件
-			mail := Mail{}
-			go mail.Send(msg)
+			sender = &Mail{}
 		case 2:
 			// Slack
-			slack := Slack{}
-			go slack.Send(msg)
+			sender = &Slack{}
 		case 3:
 			// WebHook
-			webHook := WebHook{}
-			go webHook.Send(msg)
+			sender = &WebHook{}
+		case 4:
+			sender = &Workwx{}
 		}
+		if sender != nil {
+			go sender.Send(msg)
+		}
+
 		time.Sleep(1 * time.Second)
 	}
 }
@@ -69,7 +74,7 @@ func parseNotifyTemplate(notifyTemplate string, msg Message) string {
 		"TaskName": msg["name"],
 		"Status":   msg["status"],
 		"Result":   msg["output"],
-		"Remark": msg["remark"],
+		"Remark":   msg["remark"],
 	})
 
 	return buf.String()

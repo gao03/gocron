@@ -4,6 +4,7 @@
       <el-tab-pane label="邮件" name="email"></el-tab-pane>
       <el-tab-pane label="Slack" name="slack"></el-tab-pane>
       <el-tab-pane label="Webhook" name="webhook"></el-tab-pane>
+      <el-tab-pane label="企微" name="workwx"></el-tab-pane>
     </el-tabs>
     <pre><code style="color:darkgray">
       通知模板支持的变量

@@ -39,4 +39,4 @@ profile/*
 
 node_modules
 
-gocron.db
+*.db

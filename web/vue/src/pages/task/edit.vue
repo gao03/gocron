@@ -223,7 +223,21 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="8"
+                  v-if="form.notify_status !== 1 && form.notify_type === 5">
+            <el-form-item label="接收用户">
+              <el-select key="notify-workwx" v-model="selectedWorkwxNotifyIds" filterable multiple placeholder="请选择">
+                <el-option
+                  v-for="item in workwxUsers"
+                  :key="item.id"
+                  :label="item.userId"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
+
         <el-row v-if="form.notify_status === 4">
           <el-col :span="12">
             <el-form-item label="任务执行输出关键字" prop="notify_keyword">
@@ -387,14 +401,20 @@ export default {
         {
           value: 4,
           label: 'WebHook'
+        },
+        {
+          value: 5,
+          label: '企微'
         }
       ],
       hosts: [],
       mailUsers: [],
       slackChannels: [],
+      workwxUsers: [],
       selectedHosts: [],
       selectedMailNotifyIds: [],
-      selectedSlackNotifyIds: []
+      selectedSlackNotifyIds: [],
+      selectedWorkwxNotifyIds: [],
     }
   },
   computed: {
@@ -462,7 +482,11 @@ export default {
           notifyReceiverIds.forEach((v) => {
             this.selectedSlackNotifyIds.push(parseInt(v))
           })
-        }
+        } else if (this.form.notify_type === 5) {
+            notifyReceiverIds.forEach((v) => {
+              this.selectedWorkwxNotifyIds.push(parseInt(v))
+            })
+          }
       }
     })
 
@@ -473,6 +497,10 @@ export default {
     notificationService.slack((data) => {
       this.slackChannels = data.channels
     })
+    notificationService.workwx((data) => {
+      this.workwxUsers = data.users
+    })
+    
   },
   methods: {
     submit () {
@@ -507,6 +535,9 @@ export default {
       }
       if (this.form.notify_status > 1 && this.form.notify_type === 3) {
         this.form.notify_receiver_id = this.selectedSlackNotifyIds.join(',')
+      }
+      if (this.form.notify_status > 1 && this.form.notify_type === 5) {
+        this.form.notify_receiver_id = this.selectedWorkwxNotifyIds.join(',')
       }
       taskService.update(this.form, () => {
         this.$router.push('/task')

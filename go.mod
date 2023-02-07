@@ -7,7 +7,7 @@ require (
 	github.com/Unknwon/com v0.0.0-20190321035513-0fed4efef755 // indirect
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/glebarez/go-sqlite v1.20.3
+	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-macaron/binding v0.0.0-20170611065819-ac54ee249c27
 	github.com/go-macaron/gzip v0.0.0-20160222043647-cad1c6580a07
@@ -19,17 +19,23 @@ require (
 	github.com/klauspost/compress v1.5.0 // indirect
 	github.com/klauspost/cpuid v1.2.1 // indirect
 	github.com/lib/pq v1.10.2
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/ouqiang/goutil v1.1.1
+	github.com/pkg/errors v0.8.1
 	github.com/rakyll/statik v0.1.6
+	github.com/remyoudompheng/bigfft v0.0.0-20230126093431-47fa9a501578 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli v1.22.1
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
+	github.com/xen0n/go-workwx v1.3.1
+	golang.org/x/net v0.0.0-20220421235706-1d1ef9303861
+	golang.org/x/sys v0.4.0 // indirect
 	google.golang.org/grpc v1.26.0
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 	gopkg.in/ini.v1 v1.42.0
 	gopkg.in/macaron.v1 v1.3.2
+	modernc.org/memory v1.5.0 // indirect
 	modernc.org/sqlite v1.20.3
 	xorm.io/core v0.7.3
 	xorm.io/xorm v1.3.2

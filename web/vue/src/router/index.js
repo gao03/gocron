@@ -19,6 +19,7 @@ import UserEditMyPassword from '../pages/user/editMyPassword'
 import NotificationEmail from '../pages/system/notification/email'
 import NotificationSlack from '../pages/system/notification/slack'
 import NotificationWebhook from '../pages/system/notification/webhook'
+import NotificationWorkwx from '../pages/system/notification/workwx'
 
 import Install from '../pages/install/index'
 import LoginLog from '../pages/system/loginLog'
@@ -146,6 +147,11 @@ const router = new Router({
       path: '/system/notification/webhook',
       name: 'system-notification-webhook',
       component: NotificationWebhook
+    },
+    {
+      path: '/system/notification/workwx',
+      name: 'system-notification-workwx',
+      component: NotificationWorkwx
     },
     {
       path: '/system/login-log',

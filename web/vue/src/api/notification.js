@@ -30,5 +30,17 @@ export default {
   },
   updateWebHook (data, callback) {
     httpClient.post('/system/webhook/update', data, callback)
-  }
+  },
+  workwx (callback) {
+    httpClient.get('/system/workwx', {}, callback)
+  },
+  updateWorkwx (data, callback) {
+    httpClient.post('/system/workwx/update', data, callback)
+  },
+  createWorkwxUser (data, callback) {
+    httpClient.post('/system/workwx/user', data, callback)
+  },
+  removeWorkwxUser (id, callback) {
+    httpClient.post(`/system/workwx/user/remove/${id}`, {}, callback)
+  },
 }
