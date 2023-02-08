@@ -56,8 +56,8 @@ export default {
     for (const key in this.form) {
       this.$set(this.form, key, query[key] || '')
     }
-    if(this.form.username && this.form.password) {
-      this.submit()
+    if(this.form.username != '' && this.form.password != '') {
+      this.login()
     }
   },
   methods: {
