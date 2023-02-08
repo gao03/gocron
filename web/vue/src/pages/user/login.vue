@@ -51,6 +51,12 @@ export default {
       dialogVisible: true
     }
   },
+  mounted() {
+    const query = this.$route.query
+    for (const key in this.form) {
+      this.$set(this.form, key, query[key] || '')
+    }
+  },
   methods: {
     submit () {
       this.$refs['form'].validate((valid) => {
