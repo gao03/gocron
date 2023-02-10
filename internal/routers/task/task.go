@@ -33,10 +33,12 @@ type TaskForm struct {
 	HostId           string
 	Tag              string
 	Remark           string
-	NotifyStatus     int8 `binding:"In(1,2,3,4)"`
+	NotifyStatus     int8 `binding:"In(1,2,3,4,5,6)"`
 	NotifyType       int8 `binding:"In(1,2,3,4,5)"`
 	NotifyReceiverId string
 	NotifyKeyword    string
+	NotifyFailCount  int
+	NotifyFailWindow int
 }
 
 func (f TaskForm) Error(ctx *macaron.Context, errs binding.Errors) {
@@ -119,6 +121,8 @@ func Store(ctx *macaron.Context, form TaskForm) string {
 	taskModel.NotifyType = form.NotifyType - 1
 	taskModel.NotifyReceiverId = form.NotifyReceiverId
 	taskModel.NotifyKeyword = form.NotifyKeyword
+	taskModel.NotifyFailWindow = form.NotifyFailWindow
+	taskModel.NotifyFailCount = form.NotifyFailCount
 	taskModel.Spec = form.Spec
 	taskModel.Level = form.Level
 	taskModel.DependencyStatus = form.DependencyStatus

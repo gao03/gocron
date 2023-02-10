@@ -14,7 +14,7 @@ import (
 	"gopkg.in/macaron.v1"
 )
 
-const tokenDuration = 4 * time.Hour
+const tokenDuration = 24 * time.Hour
 
 // UserForm 用户表单
 type UserForm struct {

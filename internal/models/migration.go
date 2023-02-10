@@ -43,13 +43,14 @@ func (migration *Migration) Upgrade(oldVersionId int) {
 		return
 	}
 
-	versionIds := []int{110, 122, 130, 140, 150}
+	versionIds := []int{110, 122, 130, 140, 150, 160}
 	upgradeFuncs := []func(*xorm.Session) error{
 		migration.upgradeFor110,
 		migration.upgradeFor122,
 		migration.upgradeFor130,
 		migration.upgradeFor140,
 		migration.upgradeFor150,
+		migration.upgradeFor160,
 	}
 
 	startIndex := -1
@@ -232,6 +233,16 @@ func (m *Migration) upgradeFor150(session *xorm.Session) error {
 	}
 
 	logger.Info("已升级到v1.5\n")
+
+	return nil
+}
+
+func (m *Migration) upgradeFor160(session *xorm.Session) error {
+	logger.Info("开始升级到v1.6.0")
+	err := session.Sync(new(Task))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

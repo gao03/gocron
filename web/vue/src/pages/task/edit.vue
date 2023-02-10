@@ -245,6 +245,28 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row v-if="form.notify_status === 5">
+          <el-col :span="12">
+            <el-form-item label="连续失败次数" prop="notify_fail_count">
+              <el-input-number :min="1" :controls="false" v-model.trim="form.notify_fail_count"
+                placeholder="连续失败N次发通知"></el-input-number>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-if="form.notify_status === 6">
+          <el-col :span="8">
+            <el-tooltip content="最近N次失败M次" placement="top" effect="light">
+              <el-form-item label="累计失败窗口(N)" prop="notify_fail_window">
+                <el-input-number :min="1" :controls="false" v-model.trim="form.notify_fail_window"></el-input-number>
+              </el-form-item>
+            </el-tooltip>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="累计失败次数(M)" prop="notify_fail_count">
+              <el-input-number :min="1" :controls="false" v-model.trim="form.notify_fail_count"></el-input-number>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="16">
             <el-form-item label="备注">
@@ -319,7 +341,13 @@ export default {
         ],
         notify_keyword: [
           {required: true, message: '请输入要匹配的任务执行输出关键字', trigger: 'blur'}
-        ]
+        ],
+        notify_fail_count: [
+          { required: true, message: '请输入失败次数', trigger: 'blur' }
+        ],
+        notify_fail_window: [
+          { required: true, message: '请输入失败统计窗口', trigger: 'blur' }
+        ],
       },
       httpMethods: [
         {
@@ -387,6 +415,14 @@ export default {
         {
           value: 4,
           label: '关键字匹配通知'
+        },
+        {
+          value: 5,
+          label: '连续失败通知'
+        },
+        {
+          value: 6,
+          label: '累计失败通知'
         }
       ],
       notifyTypes: [
@@ -458,6 +494,8 @@ export default {
       this.form.multi = taskData.multi ? 1 : 2
       this.form.notify_keyword = taskData.notify_keyword
       this.form.notify_status = taskData.notify_status + 1
+      this.form.notify_fail_window = taskData.notify_fail_window
+      this.form.notify_fail_count = taskData.notify_fail_count
       this.form.notify_receiver_id = taskData.notify_receiver_id
       if (taskData.notify_type) {
         this.form.notify_type = taskData.notify_type + 1

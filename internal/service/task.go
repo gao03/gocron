@@ -440,6 +440,60 @@ func SendNotification(taskModel models.Task, taskResult TaskResult) {
 		// 执行失败才发送通知
 		return
 	}
+
+	// 连续失败次数
+	if taskModel.NotifyStatus == 4 {
+		if taskResult.Err == nil {
+			return
+		}
+		logModel := new(models.TaskLog)
+		var params = models.CommonMap{}
+		params["TaskId"] = taskModel.Id
+		params["PageSize"] = taskModel.NotifyFailCount
+		list, err := logModel.List(params)
+		if err != nil {
+			return
+		}
+		// 连续失败次数
+		var failCount = 0
+		for _, log := range list {
+			if log.Status == models.Failure {
+				failCount += 1
+			} else {
+				// 不是连续失败，跳过
+				break
+			}
+		}
+		if failCount < taskModel.NotifyFailCount {
+			return
+		}
+	}
+
+	// 最近N次失败M次
+	if taskModel.NotifyStatus == 5 {
+		if taskResult.Err == nil {
+			return
+		}
+		logModel := new(models.TaskLog)
+		var params = models.CommonMap{}
+		params["TaskId"] = taskModel.Id
+		params["PageSize"] = taskModel.NotifyFailWindow
+		list, err := logModel.List(params)
+		if err != nil {
+			return
+		}
+		// 连续失败次数
+		var failCount = 0
+		for _, log := range list {
+			if log.Status == models.Failure {
+				failCount += 1
+			}
+		}
+		if failCount < taskModel.NotifyFailCount {
+			return
+		}
+	}
+
 	if taskModel.NotifyType != 3 && taskModel.NotifyReceiverId == "" {
 		return
 	}
@@ -456,7 +510,7 @@ func SendNotification(taskModel models.Task, taskResult TaskResult) {
 		"output":           taskResult.Result,
 		"status":           statusName,
 		"task_id":          taskModel.Id,
-		"remark":  			taskModel.Remark,
+		"remark":           taskModel.Remark,
 	}
 	notify.Push(msg)
 }

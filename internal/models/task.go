@@ -55,6 +55,8 @@ type Task struct {
 	NotifyType       int8                 `json:"notify_type" xorm:"tinyint notnull default 0"`               // 通知类型 1: 邮件 2: slack 3: webhook
 	NotifyReceiverId string               `json:"notify_receiver_id" xorm:"varchar(256) notnull default '' "` // 通知接受者ID, setting表主键ID，多个ID逗号分隔
 	NotifyKeyword    string               `json:"notify_keyword" xorm:"varchar(128) notnull default '' "`
+	NotifyFailWindow int                  `json:"notify_fail_window" xorm:"int"` // 连续失败的统计窗口
+	NotifyFailCount  int                  `json:"notify_fail_count" xorm:"int"`  // 连续失败的统计次数
 	Tag              string               `json:"tag" xorm:"varchar(32) notnull default ''"`
 	Remark           string               `json:"remark" xorm:"varchar(100) notnull default ''"` // 备注
 	Status           Status               `json:"status" xorm:"tinyint notnull index default 0"` // 状态 1:正常 0:停止
@@ -83,7 +85,8 @@ func (task *Task) UpdateBean(id int) (int64, error) {
 	return Db.ID(id).
 		Cols(`name,spec,protocol,command,timeout,multi,
 			retry_times,retry_interval,remark,notify_status,
-			notify_type,notify_receiver_id, dependency_task_id, dependency_status, tag,http_method, notify_keyword`).
+			notify_type,notify_receiver_id, dependency_task_id, dependency_status, tag,http_method, notify_keyword, 
+			notify_fail_window, notify_fail_count`).
 		Update(task)
 }
 
